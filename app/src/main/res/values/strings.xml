@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Agora-Content-Inspect</string>
+    <string name="rtc_stats">Rtc Stats</string>
+    <string name="agora_app_id">613192ffbda44bc0a74a17e82c2eb330</string>
+    <string name="agora_access_token"></string>
+</resources>
