@@ -21,10 +21,10 @@ import io.agora.rtc2.video.VideoCanvas
 
 class MainActivity : AppCompatActivity() {
     // Fill the App ID of your project generated on Agora Console.
-    private val appId = "<--Add Your AppId here-->"
+    private val appId = "<--Add your App ID here-->"
 
     // Fill the channel name.
-    private val channelName = "test"
+    private val channelName = "meher"
 
     // Fill the temp token generated on Agora Console.
     private val token = null
@@ -105,15 +105,6 @@ class MainActivity : AppCompatActivity() {
             // By default, the video module is disabled, call enableVideo to enable it.
             agoraEngine?.enableVideo()
 
-            // Setup content inspect options
-            val contentInspectModule = ContentInspectModule()
-            contentInspectModule.type = ContentInspectConfig.CONTENT_INSPECT_TYPE_IMAGE_MODERATION
-            contentInspectModule.interval = 2
-            val contentInspectConfig = ContentInspectConfig()
-            contentInspectConfig.modules[0] = contentInspectModule
-            contentInspectConfig.moduleCount = 1
-            agoraEngine?.enableContentInspect(true, contentInspectConfig)
-
         } catch (e: Exception) {
             showMessage(e.toString())
         }
@@ -136,6 +127,13 @@ class MainActivity : AppCompatActivity() {
         override fun onUserOffline(uid: Int, reason: Int) {
             showMessage("Remote user offline $uid $reason")
             runOnUiThread { remoteSurfaceView!!.visibility = View.GONE }
+        }
+
+        override fun onConnectionStateChanged(state: Int, reason: Int) {
+            super.onConnectionStateChanged(state, reason)
+            if (state == Constants.CONNECTION_STATE_FAILED && reason == Constants.CONNECTION_CHANGED_BANNED_BY_SERVER ) {
+                showMessage("Stream banned by the server")
+            }
         }
 
         override fun onContentInspectResult(result: Int) {
@@ -191,6 +189,17 @@ class MainActivity : AppCompatActivity() {
             // Join the channel with a temp token.
             // You need to specify the user ID yourself, and ensure that it is unique in the channel.
             agoraEngine!!.joinChannel(token, channelName, uid, options)
+
+            // Setup content inspect options
+            val contentInspectModule = ContentInspectModule()
+            contentInspectModule.type = ContentInspectConfig.CONTENT_INSPECT_TYPE_IMAGE_MODERATION
+            contentInspectModule.interval = 2
+            val contentInspectConfig = ContentInspectConfig()
+            contentInspectConfig.modules[0] = contentInspectModule
+            contentInspectConfig.moduleCount = 1
+            val returnVal = agoraEngine?.enableContentInspect(true, contentInspectConfig)
+
+            showMessage("ContenInspectModule: $returnVal")
         } else {
             Toast.makeText(applicationContext, "Permissions was not granted", Toast.LENGTH_SHORT)
                 .show()
